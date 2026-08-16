@@ -3,7 +3,7 @@ from calculator_engine import evaluate
 
 
 window = tk.Tk()
-window.title("Scientific Calculator v2.2")
+window.title("Scientific Calculator v2.3")
 window.geometry("500x780")
 window.resizable(False, False)
 
@@ -33,6 +33,16 @@ def backspace():
         display.delete(len(current) - 1, tk.END)
 
 
+def format_result(result):
+    if isinstance(result, float):
+        if result.is_integer():
+            return str(int(result))
+
+        return f"{result:.10g}"
+
+    return str(result)
+
+
 def add_to_history(expression, result):
     history.append(f"{expression} = {result}")
 
@@ -50,11 +60,12 @@ def calculate():
 
     try:
         result = evaluate(expression, angle_mode)
+        formatted_result = format_result(result)
 
-        add_to_history(expression, result)
+        add_to_history(expression, formatted_result)
 
         clear_display()
-        display.insert(0, str(result))
+        display.insert(0, formatted_result)
 
     except ZeroDivisionError:
         clear_display()
@@ -81,6 +92,24 @@ def reuse_history(event):
 
     clear_display()
     display.insert(0, expression)
+
+
+def keyboard_input(event):
+    if event.keysym in ("Return", "KP_Enter"):
+        calculate()
+        return "break"
+
+    if event.keysym == "Escape":
+        clear_display()
+        return "break"
+
+    if event.keysym == "BackSpace":
+        backspace()
+        return "break"
+
+    if event.char == "^":
+        add_to_display("**")
+        return "break"
 
 
 def create_button(parent, text, command):
@@ -114,6 +143,10 @@ display.pack(
     pady=10,
     ipady=10
 )
+
+
+display.focus_set()
+display.bind("<Key>", keyboard_input)
 
 
 mode_frame = tk.Frame(window)
@@ -196,7 +229,7 @@ history_list.bind(
 scientific_buttons = [
     ["sin", "cos", "tan", "sqrt"],
     ["log", "ln", "π", "e"],
-    ["(", ")", "**", "%"]
+    ["(", ")", "^", "%"]
 ]
 
 
@@ -226,6 +259,9 @@ for row in scientific_buttons:
             command = lambda value=button_text: add_to_display(
                 value + "("
             )
+
+        elif button_text == "^":
+            command = lambda: add_to_display("**")
 
         else:
             command = lambda value=button_text: add_to_display(
