@@ -3,7 +3,6 @@ import math
 import operator
 
 
-# Allowed binary operators
 OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -14,52 +13,40 @@ OPERATORS = {
 }
 
 
-# Allowed mathematical functions
-FUNCTIONS = {
-    "sqrt": math.sqrt,
-    "sin": lambda x: math.sin(math.radians(x)),
-    "cos": lambda x: math.cos(math.radians(x)),
-    "tan": lambda x: math.tan(math.radians(x)),
-    "log": math.log10,
-    "ln": math.log,
-}
-
-
-# Allowed mathematical constants
 CONSTANTS = {
     "pi": math.pi,
     "e": math.e,
 }
 
 
-def evaluate(expression):
+def evaluate(expression, angle_mode="DEG"):
     """
     Safely evaluate a mathematical expression.
 
-    Supported operators:
-    +, -, *, /, **, %
-
-    Supported functions:
-    sqrt(), sin(), cos(), tan(), log(), ln()
-
-    Supported constants:
-    pi, e
+    angle_mode:
+        DEG - degrees
+        RAD - radians
     """
 
     tree = ast.parse(expression, mode="eval")
-    return evaluate_node(tree.body)
+
+    return evaluate_node(
+        tree.body,
+        angle_mode
+    )
 
 
-def evaluate_node(node):
+def evaluate_node(node, angle_mode):
 
     # Numbers
     if isinstance(node, ast.Constant):
+
         if isinstance(node.value, (int, float)):
             return node.value
 
         raise ValueError("Invalid value")
 
-    # Constants such as pi and e
+    # Constants
     if isinstance(node, ast.Name):
 
         if node.id in CONSTANTS:
@@ -73,26 +60,42 @@ def evaluate_node(node):
         if type(node.op) not in OPERATORS:
             raise ValueError("Operator not allowed")
 
-        left = evaluate_node(node.left)
-        right = evaluate_node(node.right)
+        left = evaluate_node(
+            node.left,
+            angle_mode
+        )
+
+        right = evaluate_node(
+            node.right,
+            angle_mode
+        )
 
         if isinstance(node.op, ast.Div) and right == 0:
             raise ZeroDivisionError
 
-        return OPERATORS[type(node.op)](left, right)
+        return OPERATORS[type(node.op)](
+            left,
+            right
+        )
 
-    # Positive and negative numbers
+    # Positive / negative values
     if isinstance(node, ast.UnaryOp):
 
         if isinstance(node.op, ast.UAdd):
-            return +evaluate_node(node.operand)
+            return +evaluate_node(
+                node.operand,
+                angle_mode
+            )
 
         if isinstance(node.op, ast.USub):
-            return -evaluate_node(node.operand)
+            return -evaluate_node(
+                node.operand,
+                angle_mode
+            )
 
         raise ValueError("Operator not allowed")
 
-    # Mathematical functions
+    # Functions
     if isinstance(node, ast.Call):
 
         if not isinstance(node.func, ast.Name):
@@ -100,18 +103,57 @@ def evaluate_node(node):
 
         function_name = node.func.id
 
-        if function_name not in FUNCTIONS:
-            raise ValueError("Function not allowed")
+        allowed_functions = {
+            "sqrt": math.sqrt,
+            "log": math.log10,
+            "ln": math.log,
+        }
 
-        if len(node.args) != 1:
-            raise ValueError("Function requires one argument")
+        if function_name in allowed_functions:
 
-        argument = evaluate_node(node.args[0])
+            if len(node.args) != 1:
+                raise ValueError(
+                    "Function requires one argument"
+                )
 
-        try:
-            return FUNCTIONS[function_name](argument)
+            argument = evaluate_node(
+                node.args[0],
+                angle_mode
+            )
 
-        except ValueError:
-            raise ValueError("Invalid mathematical value")
+            return allowed_functions[
+                function_name
+            ](argument)
+
+        # Trigonometric functions
+        if function_name in ["sin", "cos", "tan"]:
+
+            if len(node.args) != 1:
+                raise ValueError(
+                    "Function requires one argument"
+                )
+
+            argument = evaluate_node(
+                node.args[0],
+                angle_mode
+            )
+
+            if angle_mode == "DEG":
+                argument = math.radians(argument)
+
+            elif angle_mode != "RAD":
+                raise ValueError(
+                    "Invalid angle mode"
+                )
+
+            if function_name == "sin":
+                return math.sin(argument)
+
+            if function_name == "cos":
+                return math.cos(argument)
+
+            return math.tan(argument)
+
+        raise ValueError("Function not allowed")
 
     raise ValueError("Invalid expression")

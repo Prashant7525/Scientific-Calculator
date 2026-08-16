@@ -7,9 +7,27 @@ from calculator_engine import evaluate
 # -----------------------------
 
 window = tk.Tk()
-window.title("Scientific Calculator v2.0")
-window.geometry("500x650")
+window.title("Scientific Calculator v2.1")
+window.geometry("500x700")
 window.resizable(False, False)
+
+
+# -----------------------------
+# Angle Mode
+# -----------------------------
+
+angle_mode = "DEG"
+
+
+def toggle_angle_mode():
+    global angle_mode
+
+    if angle_mode == "DEG":
+        angle_mode = "RAD"
+    else:
+        angle_mode = "DEG"
+
+    mode_button.config(text=angle_mode)
 
 
 # -----------------------------
@@ -55,7 +73,10 @@ def calculate():
     expression = display.get()
 
     try:
-        result = evaluate(expression)
+        result = evaluate(
+            expression,
+            angle_mode
+        )
 
         clear_display()
         display.insert(0, str(result))
@@ -70,24 +91,28 @@ def calculate():
 
 
 # -----------------------------
-# Button Functions
+# Mode Button
 # -----------------------------
 
-def create_button(parent, text, command):
-    button = tk.Button(
-        parent,
-        text=text,
-        font=("Arial", 15),
-        command=command
-    )
+mode_frame = tk.Frame(window)
+mode_frame.pack(
+    fill="both",
+    padx=10,
+    pady=2
+)
 
-    button.pack(
-        side="left",
-        expand=True,
-        fill="both",
-        padx=2,
-        pady=2
-    )
+mode_button = tk.Button(
+    mode_frame,
+    text=angle_mode,
+    font=("Arial", 14),
+    command=toggle_angle_mode
+)
+
+mode_button.pack(
+    side="right",
+    padx=2,
+    pady=2
+)
 
 
 # -----------------------------
@@ -117,16 +142,36 @@ for row in scientific_buttons:
         elif button_text == "e":
             command = lambda: add_to_display("e")
 
-        elif button_text in ["sin", "cos", "tan", "sqrt", "log", "ln"]:
-            command = lambda value=button_text: add_to_display(value + "(")
+        elif button_text in [
+            "sin",
+            "cos",
+            "tan",
+            "sqrt",
+            "log",
+            "ln"
+        ]:
+            command = lambda value=button_text: add_to_display(
+                value + "("
+            )
 
         else:
-            command = lambda value=button_text: add_to_display(value)
+            command = lambda value=button_text: add_to_display(
+                value
+            )
 
-        create_button(
+        button = tk.Button(
             frame,
-            button_text,
-            command
+            text=button_text,
+            font=("Arial", 15),
+            command=command
+        )
+
+        button.pack(
+            side="left",
+            expand=True,
+            fill="both",
+            padx=2,
+            pady=2
         )
 
 
@@ -156,12 +201,23 @@ for row in number_buttons:
             command = calculate
 
         else:
-            command = lambda value=button_text: add_to_display(value)
+            command = lambda value=button_text: add_to_display(
+                value
+            )
 
-        create_button(
+        button = tk.Button(
             frame,
-            button_text,
-            command
+            text=button_text,
+            font=("Arial", 15),
+            command=command
+        )
+
+        button.pack(
+            side="left",
+            expand=True,
+            fill="both",
+            padx=2,
+            pady=2
         )
 
 
