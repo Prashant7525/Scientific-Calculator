@@ -1,6 +1,33 @@
 import math
 
-print("===== Scientific Calculator v1.1 =====")
+
+def get_number(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("Error: Please enter a valid number.")
+
+
+def get_integer(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Error: Please enter a valid integer.")
+
+
+def get_choice():
+    while True:
+        choice = get_integer("Enter your choice (1-14): ")
+
+        if 1 <= choice <= 14:
+            return choice
+
+        print("Error: Please choose a number between 1 and 14.")
+
+
+print("===== Scientific Calculator v1.2 =====")
 
 print("""
 Choose an operation:
@@ -21,11 +48,11 @@ Choose an operation:
 14. Show e
 """)
 
-choice = int(input("Enter your choice (1-14): "))
+choice = get_choice()
 
 if choice in [1, 2, 3, 4, 5]:
-    num1 = float(input("Enter first number: "))
-    num2 = float(input("Enter second number: "))
+    num1 = get_number("Enter first number: ")
+    num2 = get_number("Enter second number: ")
 
     if choice == 1:
         result = num1 + num2
@@ -42,11 +69,11 @@ if choice in [1, 2, 3, 4, 5]:
         else:
             result = num1 / num2
 
-    elif choice == 5:
+    else:
         result = num1 ** num2
 
 elif choice == 6:
-    num = float(input("Enter a number: "))
+    num = get_number("Enter a number: ")
 
     if num < 0:
         result = "Error: Cannot find square root of a negative number"
@@ -54,7 +81,7 @@ elif choice == 6:
         result = math.sqrt(num)
 
 elif choice in [7, 8, 9]:
-    angle = float(input("Enter angle in degrees: "))
+    angle = get_number("Enter angle in degrees: ")
     radians = math.radians(angle)
 
     if choice == 7:
@@ -63,11 +90,11 @@ elif choice in [7, 8, 9]:
     elif choice == 8:
         result = math.cos(radians)
 
-    elif choice == 9:
+    else:
         result = math.tan(radians)
 
 elif choice == 10:
-    num = float(input("Enter a number: "))
+    num = get_number("Enter a number: ")
 
     if num <= 0:
         result = "Error: Logarithm is only defined for positive numbers"
@@ -75,7 +102,7 @@ elif choice == 10:
         result = math.log10(num)
 
 elif choice == 11:
-    num = float(input("Enter a number: "))
+    num = get_number("Enter a number: ")
 
     if num <= 0:
         result = "Error: Natural logarithm is only defined for positive numbers"
@@ -83,7 +110,7 @@ elif choice == 11:
         result = math.log(num)
 
 elif choice == 12:
-    num = int(input("Enter a non-negative integer: "))
+    num = get_integer("Enter a non-negative integer: ")
 
     if num < 0:
         result = "Error: Factorial is not defined for negative numbers"
@@ -93,10 +120,7 @@ elif choice == 12:
 elif choice == 13:
     result = math.pi
 
-elif choice == 14:
-    result = math.e
-
 else:
-    result = "Invalid choice"
+    result = math.e
 
 print("Result:", result)
