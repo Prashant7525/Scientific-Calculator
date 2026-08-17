@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="calculator">
+
+        <header class="header">
+            <h1>Scientific Calculator</h1>
+
+            <button id="modeButton" class="mode-button">
+                DEG
+            </button>
+        </header>
+
+        <section class="display-panel">
+            <input
+                type="text"
+                id="display"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Calculator display"
+            >
+        </section>
+
+        <section class="history-section">
+            <div class="history-header">
+                <h2>Calculation History</h2>
+            </div>
+
+            <div id="history" class="history-list"></div>
+        </section>
+
+        <section class="button-grid">
+
+            <button class="scientific" data-value="sin(">sin</button>
+            <button class="scientific" data-value="cos(">cos</button>
+            <button class="scientific" data-value="tan(">tan</button>
+            <button class="scientific" data-value="sqrt(">√</button>
+
+            <button class="scientific" data-value="log(">log</button>
+            <button class="scientific" data-value="ln(">ln</button>
+            <button class="scientific" data-value="pi">π</button>
+            <button class="scientific" data-value="e">e</button>
+
+            <button class="scientific" data-value="(">(</button>
+            <button class="scientific" data-value=")">)</button>
+            <button class="scientific" data-value="^">^</button>
+            <button class="scientific" data-value="%">%</button>
+
+            <button data-value="7">7</button>
+            <button data-value="8">8</button>
+            <button data-value="9">9</button>
+            <button data-value="/">÷</button>
+
+            <button data-value="4">4</button>
+            <button data-value="5">5</button>
+            <button data-value="6">6</button>
+            <button data-value="*">×</button>
+
+            <button data-value="1">1</button>
+            <button data-value="2">2</button>
+            <button data-value="3">3</button>
+            <button data-value="-">−</button>
+
+            <button data-value="0">0</button>
+            <button data-value=".">.</button>
+            <button id="equals">=</button>
+            <button data-value="+">+</button>
+
+        </section>
+
+        <section class="control-row">
+
+            <button id="clearHistory" class="clear-history">
+                CLEAR HISTORY
+            </button>
+
+            <button id="clear" class="clear">
+                CLEAR
+            </button>
+
+            <button id="backspace" class="backspace">
+                ⌫
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
